@@ -235,9 +235,17 @@
                     <i class="fas fa-user-graduate mr-2"></i>
                     <span>Student: Little Bug</span>
                 </div>
-                <button id="new-task-btn" class="bg-white text-green-700 px-4 py-2 rounded-full font-bold hover:bg-gray-100 transition">
-                    <i class="fas fa-plus mr-2"></i> New Task
-                </button>
+                <div class="flex space-x-2">
+                    <button id="export-data-btn" class="bg-blue-500 text-white px-3 py-2 rounded-full font-bold hover:bg-blue-600 transition text-sm">
+                        <i class="fas fa-download mr-1"></i> Exportar
+                    </button>
+                    <button id="import-data-btn" class="bg-purple-500 text-white px-3 py-2 rounded-full font-bold hover:bg-purple-600 transition text-sm">
+                        <i class="fas fa-upload mr-1"></i> Importar
+                    </button>
+                    <button id="new-task-btn" class="bg-white text-green-700 px-4 py-2 rounded-full font-bold hover:bg-gray-100 transition">
+                        <i class="fas fa-plus mr-2"></i> New Task
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -879,6 +887,67 @@
             updateCurrentWeekDisplay();
         }
         
+        // Exportar tareas a un archivo JSON
+        function exportTasks() {
+            const dataStr = JSON.stringify(tasks, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'little-bug-planner-data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        // Importar tareas desde un archivo JSON
+        function importTasks() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                
+                if (!file) {
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        // Validar que los datos importados tienen la estructura correcta
+                        if (Array.isArray(importedData) && importedData.length > 0) {
+                            // Verificar que al menos el primer elemento tiene la estructura esperada
+                            const firstItem = importedData[0];
+                            if (firstItem && (firstItem.view === 'planner' || firstItem.view === 'weekend')) {
+                                // Los datos parecen válidos, proceder con la importación
+                                tasks = importedData;
+                                saveTasksToLocalStorage();
+                                renderTasks();
+                                updateStats();
+                                alert('¡Datos importados correctamente!');
+                            } else {
+                                alert('El archivo no contiene datos de tareas válidos.');
+                            }
+                        } else {
+                            alert('El archivo no contiene un array de tareas válido.');
+                        }
+                    } catch (error) {
+                        console.error('Error al importar datos:', error);
+                        alert('Error al importar el archivo. Asegúrate de que es un JSON válido.');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
         // Save tasks to localStorage
         function saveTasksToLocalStorage() {
             localStorage.setItem('littleBugTasks', JSON.stringify(tasks));
@@ -1269,6 +1338,10 @@
             
             // Delete task button
             deleteTaskBtn.addEventListener('click', handleDeleteTask);
+            
+            // Exportar e importar datos
+            document.getElementById('export-data-btn').addEventListener('click', exportTasks);
+            document.getElementById('import-data-btn').addEventListener('click', importTasks);
             
             // Drag and drop functionality
             setupDragAndDrop();
