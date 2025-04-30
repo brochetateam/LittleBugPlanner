@@ -1719,5 +1719,50 @@
     </script>
     <!-- Añadir DragDropTouch para soporte táctil -->
     <script src="https://unpkg.com/dragdroptouch"></script> 
+    <div id="joke-modal" class="modal" style="display:none;">
+        <div class="modal-content bug-theme text-center p-6 border-4 border-green-400 shadow-xl transform transition-all">
+            <div class="bug-icon mb-4">
+                <i class="fas fa-bug text-4xl text-green-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-4 text-green-700">¡Little Bug te cuenta!</h2>
+            <div class="bg-white p-4 rounded-lg shadow-inner mb-6">
+                <p id="joke-text" class="mb-2 text-gray-700 text-lg"></p>
+                <p class="text-sm text-green-600 italic">* Programando con humor desde 42 Academy *</p>
+            </div>
+            <button id="close-joke-modal" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-bold hover:from-green-600 hover:to-green-700 transition transform hover:scale-105">
+                <i class="fas fa-laugh-beam mr-2"></i> ¡Entendido!
+            </button>
+        </div>
+    </div>
+    <script type="module">
+    import { jokes } from './jokes.js';
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => mostrarChiste(), 1000); // Pequeño retraso para mejor experiencia
+    });
+    function mostrarChiste() {
+        const modal = document.getElementById('joke-modal');
+        const jokeText = document.getElementById('joke-text');
+        const closeBtn = document.getElementById('close-joke-modal');
+        if (!modal || !jokeText || !closeBtn) return;
+        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        jokeText.textContent = randomJoke;
+        
+        // Mostrar modal con animación
+        modal.style.display = 'flex';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.transition = 'opacity 0.5s ease';
+            modal.style.opacity = '1';
+        }, 10);
+        
+        closeBtn.onclick = () => {
+            // Ocultar modal con animación
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 500);
+        };
+    }
+    </script>
 </body>
 </html>
