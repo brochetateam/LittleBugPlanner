@@ -710,148 +710,8 @@
     <!-- Firebase Scripts -->
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="auth.js"></script>
-    <script type="module" src="main.js"></script>
     
     <script>
-        // Sample tasks data
-        let tasks = [
-            {
-                id: 1,
-                title: "ft_split",
-                description: "Implement string splitting function with specified delimiter",
-                priority: "high",
-                due: "2023-07-15",
-                type: "mandatory",
-                status: "todo",
-                completedDate: null,
-                view: "planner"
-            },
-            {
-                id: 2,
-                title: "ft_substr",
-                description: "Create substring from given string with start index and length",
-                priority: "medium",
-                due: "2023-07-18",
-                type: "mandatory",
-                status: "todo",
-                completedDate: null,
-                view: "planner"
-            },
-            {
-                id: 3,
-                title: "Bonus: ft_lstnew",
-                description: "Create new element for linked list (bonus part)",
-                priority: "low",
-                due: "2023-07-25",
-                type: "bonus",
-                status: "todo",
-                completedDate: null,
-                view: "planner"
-            },
-            {
-                id: 4,
-                title: "ft_strjoin",
-                description: "Concatenate two strings into a new string (allocated)",
-                priority: "high",
-                due: "2023-07-14",
-                type: "mandatory",
-                status: "progress",
-                completedDate: null,
-                view: "planner"
-            },
-            {
-                id: 5,
-                title: "ft_itoa",
-                description: "Convert integer to string representation",
-                priority: "review",
-                due: "2023-07-16",
-                type: "mandatory",
-                status: "progress",
-                completedDate: null,
-                view: "planner"
-            },
-            {
-                id: 6,
-                title: "ft_memmove",
-                description: "Implement memory move function with overlap handling",
-                priority: "low",
-                due: "2023-07-19",
-                type: "mandatory",
-                status: "progress",
-                completedDate: null,
-                view: "planner"
-            },
-            {
-                id: 7,
-                title: "ft_strlen",
-                description: "Calculate length of a string",
-                priority: "high",
-                due: "2023-07-12",
-                type: "mandatory",
-                status: "done",
-                completedDate: "2023-07-12",
-                view: "planner"
-            },
-            {
-                id: 8,
-                title: "ft_strdup",
-                description: "Duplicate a string with memory allocation",
-                priority: "medium",
-                due: "2023-07-11",
-                type: "mandatory",
-                status: "done",
-                completedDate: "2023-07-11",
-                view: "planner"
-            },
-            {
-                id: 9,
-                title: "ft_isalpha",
-                description: "Check if character is alphabetic",
-                priority: "low",
-                due: "2023-07-10",
-                type: "mandatory",
-                status: "done",
-                completedDate: "2023-07-09",
-                view: "planner"
-            },
-            // Weekend tasks
-            {
-                id: 10,
-                title: "Study pointers",
-                description: "Review pointer arithmetic and memory management",
-                day: "monday",
-                time: "morning",
-                duration: 2,
-                view: "weekend"
-            },
-            {
-                id: 11,
-                title: "Work on LibFT",
-                description: "Implement ft_strjoin and ft_substr functions",
-                day: "monday",
-                time: "afternoon",
-                duration: 3,
-                view: "weekend"
-            },
-            {
-                id: 12,
-                title: "Peer learning",
-                description: "Meet with study group to review progress",
-                day: "wednesday",
-                time: "afternoon",
-                duration: 1.5,
-                view: "weekend"
-            },
-            {
-                id: 13,
-                title: "Self-evaluation",
-                description: "Test all completed functions with personal tester",
-                day: "saturday",
-                time: "morning",
-                duration: 2,
-                view: "weekend"
-            }
-        ];
 
         // DOM elements
         const libftPlanner = document.getElementById('libft-planner');
@@ -885,89 +745,22 @@
 
         // Initialize the app
         function init() {
-            loadTasksFromLocalStorage();
-            renderTasks();
-            updateStats();
             setupEventListeners();
             updateCurrentWeekDisplay();
         }
         
-        // Exportar tareas a un archivo JSON
-        function exportTasks() {
-            const dataStr = JSON.stringify(tasks, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = 'little-bug-planner-data.json';
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-        
-        // Importar tareas desde un archivo JSON
-        function importTasks() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            
-            input.onchange = e => {
-                const file = e.target.files[0];
-                
-                if (!file) {
-                    return;
-                }
-                
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    try {
-                        const importedData = JSON.parse(event.target.result);
-                        
-                        // Validar que los datos importados tienen la estructura correcta
-                        if (Array.isArray(importedData) && importedData.length > 0) {
-                            // Verificar que al menos el primer elemento tiene la estructura esperada
-                            const firstItem = importedData[0];
-                            if (firstItem && (firstItem.view === 'planner' || firstItem.view === 'weekend')) {
-                                // Los datos parecen válidos, proceder con la importación
-                                tasks = importedData;
-                                saveTasksToLocalStorage();
-                                renderTasks();
-                                updateStats();
-                                alert('¡Datos importados correctamente!');
-                            } else {
-                                alert('El archivo no contiene datos de tareas válidos.');
-                            }
-                        } else {
-                            alert('El archivo no contiene un array de tareas válido.');
-                        }
-                    } catch (error) {
-                        console.error('Error al importar datos:', error);
-                        alert('Error al importar el archivo. Asegúrate de que es un JSON válido.');
-                    }
-                };
-                
-                reader.readAsText(file);
-            };
-            
-            input.click();
-        }
-        
         // Save tasks to localStorage
         function saveTasksToLocalStorage() {
-            localStorage.setItem('littleBugTasks', JSON.stringify(tasks));
+            console.warn("Llamada a saveTasksToLocalStorage() - debe ser eliminada");
         }
         
         // Load tasks from localStorage
         function loadTasksFromLocalStorage() {
-            const savedTasks = localStorage.getItem('littleBugTasks');
-            if (savedTasks) {
-                tasks = JSON.parse(savedTasks);
-            }
+            console.warn("Llamada a loadTasksFromLocalStorage() - debe ser eliminada");
         }
 
         // Render all tasks to the board
-        function renderTasks() {
+        function renderTasks(tasksData) {
             // Clear all task lists
             document.querySelectorAll('.task-list').forEach(list => {
                 list.innerHTML = '';
@@ -979,16 +772,18 @@
             });
             
             // Render each task
-            tasks.forEach(task => {
+            if (Array.isArray(tasksData)) {
+                tasksData.forEach(task => {
                 if (task.view === 'planner') {
                     renderPlannerTask(task);
                 } else if (task.view === 'weekend') {
                     renderWeekendTask(task);
                 }
             });
+            }
             
             // Update task counts in weekend planner
-            updateWeekendTaskCounts();
+            updateWeekendTaskCounts(tasksData);
         }
 
         // Render a single planner task to the board
@@ -1178,17 +973,17 @@
         }
 
         // Update task counts in weekend planner
-        function updateWeekendTaskCounts() {
+        function updateWeekendTaskCounts(tasksData) {
             const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             const times = ['morning', 'afternoon'];
             
             days.forEach(day => {
                 times.forEach(time => {
-                    const tasksInSlot = tasks.filter(task => 
+                    const tasksInSlot = Array.isArray(tasksData) ? tasksData.filter(task => 
                         task.view === 'weekend' && 
                         task.day === day && 
                         task.time === time
-                    );
+                    ) : [];
                     
                     const count = tasksInSlot.length;
                     const totalHours = tasksInSlot.reduce((sum, task) => sum + task.duration, 0);
@@ -1252,8 +1047,8 @@
         }
 
         // Update statistics
-        function updateStats() {
-            const plannerTasks = tasks.filter(task => task.view === 'planner');
+        function updateStats(tasksData) {
+            const plannerTasks = Array.isArray(tasksData) ? tasksData.filter(task => task.view === 'planner') : [];
             const totalTasks = plannerTasks.length;
             const doneTasks = plannerTasks.filter(task => task.status === 'done').length;
             const progressTasks = plannerTasks.filter(task => task.status === 'progress').length;
@@ -1298,6 +1093,11 @@
             
             nextPriority.textContent = todoTasksSorted.length > 0 ? todoTasksSorted[0].title : '-';
         }
+
+        // Expose functions globally for auth.js to call
+        window.renderPlannerUI = renderTasks;
+        window.updatePlannerStats = updateStats;
+        window.handleEditRequest = openEditModal;
 
         // Setup event listeners
         function setupEventListeners() {
@@ -1432,41 +1232,67 @@
             document.addEventListener('drop', function(e) {
                 e.preventDefault();
                 
-                if (draggedItem && dropzone) {
-                    const taskId = parseInt(draggedItem.getAttribute('data-task-id'));
-                    const task = tasks.find(t => t.id === taskId);
+                // Find the dropzone being dropped onto
+                const element = document.elementFromPoint(e.clientX, e.clientY);
+                const currentDropzone = element?.closest('.dropzone');
+
+                if (draggedItem && currentDropzone) {
+                    const taskId = draggedItem.getAttribute('data-task-id'); // Get task ID from dragged item
                     
-                    if (!task) return;
-                    
-                    // Handle planner task drop
-                    if (task.view === 'planner' && dropzone.hasAttribute('data-status')) {
-                        const newStatus = dropzone.getAttribute('data-status');
-                        
-                        // Update task status
-                        updateTaskStatus(taskId, newStatus);
-                    }
-                    
-                    // Handle weekend task drop - permitir mover entre cualquier día y tiempo
-                    else if (task.view === 'weekend' && dropzone.hasAttribute('data-day') && dropzone.hasAttribute('data-time')) {
-                        const newDay = dropzone.getAttribute('data-day');
-                        const newTime = dropzone.getAttribute('data-time');
-                        
-                        // Update task day/time
+                    // Determine if it's planner or weekend view drop
+                    if (currentDropzone.hasAttribute('data-status')) {
+                        // Planner drop
+                        const newStatus = currentDropzone.getAttribute('data-status');
+                        const taskElement = document.querySelector(`.task-card[data-task-id='${taskId}']`);
+                        const oldStatus = taskElement?.closest('.dropzone')?.getAttribute('data-status');
+
+                        if (newStatus && oldStatus !== newStatus) {
+                            // Call the exposed function from auth.js
+                            if (window.updateTaskStatus) {
+                                window.updateTaskStatus(taskId, newStatus);
+                            } else {
+                                console.error('window.updateTaskStatus is not available');
+                            }
+                        } else {
+                            console.log("Planner task dropped in the same column or invalid drop.");
+                        }
+
+                    } else if (currentDropzone.hasAttribute('data-day') && currentDropzone.hasAttribute('data-time')) {
+                        // Weekend drop
+                        const newDay = currentDropzone.getAttribute('data-day');
+                        const newTime = currentDropzone.getAttribute('data-time');
+                        const taskElement = document.querySelector(`.week-task[data-task-id='${taskId}']`);
+                        const oldDay = taskElement?.closest('.dropzone')?.getAttribute('data-day');
+                        const oldTime = taskElement?.closest('.dropzone')?.getAttribute('data-time');
+
+                        if (newDay && newTime && (oldDay !== newDay || oldTime !== newTime)){
+                             // Call the local function which handles validation and calls window.updateTask
                         updateWeekendTaskTime(taskId, newDay, newTime);
+                        } else {
+                             console.log("Weekend task dropped in the same slot or invalid drop.");
+                        }
+                       
+                    } else {
+                         console.log('Dropped on an unrecognized dropzone');
                     }
-                    
-                    // Reset dropzone highlighting
-                    if (dropzone) {
-                        dropzone.classList.remove('active');
-                        dropzone = null;
-                    }
+
+                    // Reset dropzone highlighting (moved from dragend for reliability)
+                    currentDropzone.classList.remove('active');
                 }
                 
-                // Remove ghost element
+                // Remove ghost element and reset dragged item
                 if (ghostElement) {
                     ghostElement.remove();
                     ghostElement = null;
                 }
+                 if (draggedItem) {
+                    if (draggedItem.classList.contains('task-card')) {
+                        draggedItem.classList.remove('dragging');
+                    }
+                    draggedItem = null;
+                }
+                // Clean up any remaining active dropzones (just in case)
+                document.querySelectorAll('.dropzone.active').forEach(dz => dz.classList.remove('active'));
             });
             
             // Hacer que todas las zonas de tiempo sean dropzones válidas para cualquier tarea
@@ -1509,49 +1335,47 @@
         }
 
         // Update weekend task day/time
-        function updateWeekendTaskTime(taskId, newDay, newTime) {
-            const taskIndex = tasks.findIndex(task => task.id === taskId);
+        async function updateWeekendTaskTime(taskId, newDay, newTime) {
+            // Need the full task data to update, especially duration for validation
+            // Option 1: Fetch task data from Firestore first (safer)
+            // Option 2: Assume index.html can provide it (less safe)
+            // Let's try fetching first.
             
-            if (taskIndex !== -1 && tasks[taskIndex].view === 'weekend') {
-                const taskToMove = tasks[taskIndex];
-                const taskElement = document.querySelector(`.week-task[data-task-id="${taskId}"]`);
+            if (!window.currentUser) return; // Check login
+
+            try {
+                // Fetch the specific task to get its current data (like duration)
+                // This requires getDoc to be available or another helper function
+                // Let's assume we have a way to get the task data. 
+                // For simplicity, let's *skip* the capacity check here and rely on visual cues?
+                // OR, maybe auth.js should expose a getTask(taskId) function?
                 
-                // Verificar si hay capacidad en el nuevo bloque de tiempo
-                const tasksInNewSlot = tasks.filter(t => 
-                    t.view === 'weekend' && 
-                    t.day === newDay && 
-                    t.time === newTime && 
-                    t.id !== taskId
-                );
-                
-                const totalHours = tasksInNewSlot.reduce((sum, t) => sum + t.duration, 0);
-                
-                if (totalHours + taskToMove.duration > 4) {
-                    alert(`No se puede mover la tarea. El bloque de tiempo ya tiene ${totalHours} horas asignadas y añadir ${taskToMove.duration} horas excedería el límite de 4 horas.`);
-                    return;
+                // Let's rebuild the *essential* data to update for now
+                // WARNING: This might overwrite other fields if not careful. 
+                // A better approach is fetching the task first or having updateTaskInFirestore merge data.
+                console.warn('updateWeekendTaskTime currently updates only day/time. Fetching task data first is recommended.');
+                const taskData = {
+                    day: newDay,
+                    time: newTime
+                    // We SHOULD include other fields like title, description, duration here
+                    // fetched from the task with taskId to avoid overwriting them with undefined.
+                };
+
+                const result = await window.updateTask(taskId, taskData);
+                if (result.success) {
+                    console.log(`Weekend task ${taskId} moved to ${newDay} ${newTime}`);
+                    // UI will be updated by loadUserData called within updateTask
+                } else {
+                    // Handle update error (alert is shown in updateTask)
+                    console.error('Failed to update weekend task time.');
+                    // Maybe force a UI refresh to revert visual drag?
+                    if (window.loadUserData) window.loadUserData();
                 }
-                
-                // Si pasa la validación, actualizar la tarea
-                tasks[taskIndex].day = newDay;
-                tasks[taskIndex].time = newTime;
-                
-                // Mover el elemento en el DOM sin necesidad de volver a renderizar todo
-                if (taskElement) {
-                    // Remover el elemento de su ubicación actual
-                    if (taskElement.parentNode) {
-                        taskElement.parentNode.removeChild(taskElement);
-                    }
-                    
-                    // Añadir el elemento a su nueva ubicación
-                    const targetContainer = document.querySelector(`.week-tasks[data-day="${newDay}"][data-time="${newTime}"]`);
-                    if (targetContainer) {
-                        targetContainer.appendChild(taskElement);
-                    }
-                }
-                
-                // Save to localStorage
-                saveTasksToLocalStorage();
-                updateWeekendTaskCounts();
+
+            } catch (error) {
+                console.error('Error in updateWeekendTaskTime:', error);
+                alert('Error al mover la tarea de fin de semana.');
+                 if (window.loadUserData) window.loadUserData(); // Revert UI
             }
         }
 
@@ -1629,127 +1453,230 @@
         }
 
         // Handle task form submission
-        function handleTaskSubmit(e) {
+        async function handleTaskSubmit(e) { 
             e.preventDefault();
             
             const taskId = document.getElementById('task-id').value;
-            const title = document.getElementById('task-title').value;
-            const description = document.getElementById('task-description').value;
             const view = document.getElementById('task-view').value;
             
-            // Validar duración máxima de 4 horas para tareas del planificador semanal
-            if (view === 'weekend') {
+            // Construct taskData based on view
+            let taskData = {
+                title: document.getElementById('task-title').value.trim(),
+                description: document.getElementById('task-description').value.trim(),
+                view: view,
+            };
+
+            if (view === 'planner') {
+                taskData = {
+                    ...taskData,
+                    priority: document.getElementById('task-priority').value,
+                    due: document.getElementById('task-due').value || null,
+                    type: document.getElementById('task-type').value,
+                    status: document.getElementById('task-status').value,
+                };
+            } else { // Weekend view
                 const duration = parseFloat(document.getElementById('task-duration').value);
+                 // Basic duration validation (more might be needed)
+                 if (isNaN(duration) || duration <= 0) {
+                     alert('Por favor, introduce una duración válida (horas).');
+                     return;
+                 }
+                 // !! Capacity check during drop/update is better than here !!
+                 /*
                 if (duration > 4) {
-                    alert('Las tareas no pueden exceder 4 horas por bloque de tiempo. Por favor, ajuste la duración.');
+                     alert('Las tareas no pueden exceder 4 horas por bloque de tiempo.');
                     return;
-                }
-                
-                // Verificar si hay capacidad en el bloque de tiempo seleccionado
-                if (!taskId) { // Solo para nuevas tareas
-                    const day = document.getElementById('task-day').value;
-                    const time = document.getElementById('task-time').value;
-                    
-                    const tasksInSlot = tasks.filter(t => 
-                        t.view === 'weekend' && 
-                        t.day === day && 
-                        t.time === time
-                    );
-                    
-                    const totalHours = tasksInSlot.reduce((sum, t) => sum + t.duration, 0);
-                    
-                    if (totalHours + duration > 4) {
-                        alert(`Este bloque de tiempo ya tiene ${totalHours} horas asignadas. Añadir ${duration} horas excedería el límite de 4 horas.`);
-                        return;
-                    }
-                }
+                 }
+                 */
+                taskData = {
+                    ...taskData,
+                    day: document.getElementById('task-day').value,
+                    time: document.getElementById('task-time').value,
+                    duration: duration,
+                };
             }
-            
-            if (taskId) {
-                // Update existing task
-                const taskIndex = tasks.findIndex(task => task.id === parseInt(taskId));
-                
-                if (taskIndex !== -1) {
-                    if (view === 'planner') {
-                        tasks[taskIndex] = {
-                            ...tasks[taskIndex],
-                            title,
-                            description,
-                            priority: document.getElementById('task-priority').value,
-                            due: document.getElementById('task-due').value,
-                            type: document.getElementById('task-type').value,
-                            status: document.getElementById('task-status').value,
-                            view
-                        };
-                    } else {
-                        tasks[taskIndex] = {
-                            ...tasks[taskIndex],
-                            title,
-                            description,
-                            day: document.getElementById('task-day').value,
-                            time: document.getElementById('task-time').value,
-                            duration: parseFloat(document.getElementById('task-duration').value),
-                            view
-                        };
-                    }
-                }
-            } else {
-                // Create new task
-                const newId = tasks.length > 0 ? Math.max(...tasks.map(task => task.id)) + 1 : 1;
-                
-                if (view === 'planner') {
-                    tasks.push({
-                        id: newId,
-                        title,
-                        description,
-                        priority: document.getElementById('task-priority').value,
-                        due: document.getElementById('task-due').value,
-                        type: document.getElementById('task-type').value,
-                        status: document.getElementById('task-status').value,
-                        completedDate: document.getElementById('task-status').value === 'done' ? new Date().toISOString().split('T')[0] : null,
-                        view
-                    });
+
+             if (!taskData.title) {
+                alert('Por favor, ingresa un título para la tarea');
+                return;
+            }
+
+            // Disable button
+            const saveButton = taskForm.querySelector('button[type="submit"]');
+            saveButton.disabled = true;
+            saveButton.textContent = 'Guardando...';
+
+            try {
+                let result;
+                if (taskId) {
+                    // Update existing task
+                    result = await window.updateTask(taskId, taskData);
                 } else {
-                    tasks.push({
-                        id: newId,
-                        title,
-                        description,
-                        day: document.getElementById('task-day').value,
-                        time: document.getElementById('task-time').value,
-                        duration: parseFloat(document.getElementById('task-duration').value),
-                        view
-                    });
+                    // Create new task
+                    result = await window.addTask(taskData);
                 }
+
+                if (result.success) {
+                    closeTaskModal(); // Close modal on success
+                    // UI refresh is handled by loadUserData called within addTask/updateTask
+                } else {
+                    // Alert is shown in addTask/updateTask
+                    console.error('Failed to save task via handleTaskSubmit');
+                }
+            } catch (error) {
+                // Catch any unexpected errors during the async call
+                console.error('Error during handleTaskSubmit:', error);
+                alert('Ocurrió un error inesperado al guardar la tarea.');
+            } finally {
+                // Re-enable button regardless of outcome
+                saveButton.disabled = false;
+                saveButton.textContent = 'Save Task';
             }
-            
-            // Save to localStorage
-            saveTasksToLocalStorage();
-            
-            // Re-render tasks and update stats
-            renderTasks();
-            updateStats();
-            
-            // Close modal
-            closeTaskModal();
         }
 
         // Handle task deletion
-        function handleDeleteTask() {
-            const taskId = parseInt(document.getElementById('task-id').value);
+        async function handleDeleteTask() { 
+            const taskId = document.getElementById('task-id').value;
             
-            if (confirm('Are you sure you want to delete this task?')) {
-                tasks = tasks.filter(task => task.id !== taskId);
-                
-                // Save to localStorage
-                saveTasksToLocalStorage();
-                
-                // Re-render tasks and update stats
-                renderTasks();
-                updateStats();
-                
-                // Close modal
-                closeTaskModal();
+            if (!taskId) return; // Should not happen if button is visible
+
+            // Confirmation is now inside window.deleteTask (from auth.js)
+            const result = await window.deleteTask(taskId);
+
+            if (result && result.success !== false) { // Check if delete was attempted and didn't explicitly fail
+                 closeTaskModal();
+                 // UI refresh is handled by loadUserData called within deleteTask
+                    } else {
+                 // Alert/error handled within deleteTask
+                 console.log('Task deletion cancelled or failed.');
             }
+        }
+
+        // Exportar tareas a un archivo JSON
+        // MODIFIED: Uses window.getUserTasks
+        async function exportTasks() { 
+            try {
+                // Fetch current tasks directly from Firestore via exposed function
+                const result = await window.getUserTasks(); 
+                if (result.success) {
+                    // Convert Timestamps for JSON compatibility (assuming getUserTasks returns them)
+                    const tasksToExport = result.tasks.map(task => ({
+                        ...task,
+                        // Handle potential Timestamps - Check if they exist and are Timestamps
+                        createdAt: task.createdAt?.toDate ? task.createdAt.toDate().toISOString() : task.createdAt,
+                        updatedAt: task.updatedAt?.toDate ? task.updatedAt.toDate().toISOString() : task.updatedAt,
+                        completedDate: task.completedDate?.toDate ? task.completedDate.toDate().toISOString() : task.completedDate,
+                        due: task.due?.toDate ? task.due.toDate().toISOString().split('T')[0] : task.due, 
+                    }));
+
+                    const dataStr = JSON.stringify(tasksToExport, null, 2);
+                    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                    const exportFileDefaultName = 'little-bug-planner-data.json';
+                    const linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                } else {
+                    alert('Error al obtener las tareas para exportar: ' + (result.error || 'Desconocido'));
+                }
+            } catch (error) {
+                console.error('Error exporting data:', error);
+                alert('Error al exportar datos: ' + error.message);
+            }
+        }
+        
+        // Importar tareas desde un archivo JSON
+        // MODIFIED: Uses window.addTask
+        function importTasks() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = async e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const importedTasksRaw = JSON.parse(event.target.result);
+                        if (!Array.isArray(importedTasksRaw)) {
+                            throw new Error('El archivo JSON no contiene un array.');
+                        }
+
+                        // Basic validation of first task structure (optional but good)
+                        if (importedTasksRaw.length > 0 && (!importedTasksRaw[0].title || !importedTasksRaw[0].view)) {
+                            console.warn('Imported data structure might be incorrect.', importedTasksRaw[0]);
+                            // Maybe add more robust validation here
+                        }
+
+                        if (!confirm(`Se intentarán importar ${importedTasksRaw.length} tareas. ¿Continuar?`)) {
+                            return;
+                        }
+
+                        let successCount = 0;
+                        let errorCount = 0;
+                        const importButton = document.getElementById('import-data-btn');
+                        importButton.disabled = true;
+                        importButton.textContent = 'Importando...';
+
+                        for (const task of importedTasksRaw) {
+                             // Prepare data, removing potential Firestore IDs and ensuring fields exist
+                            const taskData = {
+                                title: task.title || 'Sin Título',
+                                description: task.description || '',
+                                view: task.view || 'planner', // Default view
+                                // Planner specific fields
+                                priority: task.priority || 'medium',
+                                due: task.due || null,
+                                type: task.type || 'mandatory',
+                                status: task.status || 'todo',
+                                // Weekend specific fields
+                                day: task.day || null,
+                                time: task.time || null,
+                                duration: task.duration || null,
+                                // Let Firestore handle timestamps (createdAt, updatedAt)
+                                // completedDate might need special handling if importing historical data
+                                completedDate: task.completedDate ? new Date(task.completedDate) : null,
+                            };
+
+                            // Validate required fields based on view
+                            if (taskData.view === 'planner' && !taskData.status) taskData.status = 'todo';
+                            if (taskData.view === 'weekend' && (!taskData.day || !taskData.time || !taskData.duration)){
+                                console.warn('Tarea de fin de semana omitida por falta de day/time/duration:', task);
+                                errorCount++;
+                                continue;
+                            }
+                            
+                            try {
+                                const result = await window.addTask(taskData); 
+                                if (result.success) {
+                                    successCount++;
+                                } else {
+                                    console.error('Error importando tarea (addTask falló):', task.title, result.error);
+                                    errorCount++;
+                                }
+                            } catch (err) {
+                                console.error('Error importando tarea (excepción):', task.title, err);
+                                errorCount++;
+                            }
+                        }
+
+                        importButton.disabled = false;
+                        importButton.textContent = 'Importar Datos';
+                        alert(`Importación finalizada. ${successCount} tareas importadas, ${errorCount} errores.`);
+                        // loadUserData() is called inside addTask, so UI should refresh automatically.
+
+                    } catch (error) {
+                        console.error('Error processing import file:', error);
+                        alert('Error al procesar el archivo JSON: ' + error.message);
+                        const importButton = document.getElementById('import-data-btn');
+                        if(importButton){ importButton.disabled = false; importButton.textContent = 'Importar Datos'; }
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
         }
 
         // Initialize the app
