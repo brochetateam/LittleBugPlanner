@@ -9,7 +9,8 @@ import {
     addTaskToFirestore, // New function
     updateTaskInFirestore, // New function
     deleteTaskFromFirestore, // New function
-    onAuthStateChange 
+    onAuthStateChange,
+    getTask as getTaskFirestore
 } from './firebase-config.js';
 
 // DOM Elements
@@ -617,6 +618,17 @@ window.getUserTasks = async () => { // Wrap getUserTasks to ensure currentUser i
         return { success: false, tasks: [] };
     }
     return await getUserTasksFirestore(currentUser.uid);
+};
+window.getTask = async (taskId) => { // Wrap getTask
+    if (!currentUser) {
+        console.error('Cannot get task: User not logged in.');
+        return { success: false, error: 'User not logged in' };
+    }
+    if (!taskId) {
+        console.error('Cannot get task: No task ID provided.');
+        return { success: false, error: 'No task ID provided' };
+    }
+    return await getTaskFirestore(currentUser.uid, taskId);
 };
 
 // Auto-initialize when imported directly

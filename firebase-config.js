@@ -114,6 +114,23 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
   }
 };
 
+// Get a single task for a user
+export const getTask = async (userId, taskId) => {
+  try {
+    const taskRef = doc(db, "users", userId, "tasks", taskId);
+    const docSnap = await getDoc(taskRef);
+    if (docSnap.exists()) {
+      // Combine id and data
+      return { success: true, task: { id: docSnap.id, ...docSnap.data() } };
+    } else {
+      console.error("No such task found:", taskId);
+      return { success: false, error: "Task not found" };
+    }
+  } catch (error) {
+    console.error("Error getting single task: ", error);
+    return { success: false, error: error.message };
+  }
+};
 
 // Remove the old saveUserTasks function as it's replaced by individual CRUD
 /*

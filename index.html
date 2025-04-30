@@ -1336,40 +1336,42 @@
 
         // Update weekend task day/time
         async function updateWeekendTaskTime(taskId, newDay, newTime) {
-            // Need the full task data to update, especially duration for validation
-            // Option 1: Fetch task data from Firestore first (safer)
-            // Option 2: Assume index.html can provide it (less safe)
-            // Let's try fetching first.
+            if (!taskId) return;
             
-            if (!window.currentUser) return; // Check login
-
             try {
-                // Fetch the specific task to get its current data (like duration)
-                // This requires getDoc to be available or another helper function
-                // Let's assume we have a way to get the task data. 
-                // For simplicity, let's *skip* the capacity check here and rely on visual cues?
-                // OR, maybe auth.js should expose a getTask(taskId) function?
+                // Get current task data first
+                const resultGet = await window.getTask(taskId);
                 
-                // Let's rebuild the *essential* data to update for now
-                // WARNING: This might overwrite other fields if not careful. 
-                // A better approach is fetching the task first or having updateTaskInFirestore merge data.
-                console.warn('updateWeekendTaskTime currently updates only day/time. Fetching task data first is recommended.');
-                const taskData = {
+                if (!resultGet || !resultGet.success) {
+                     console.error('Failed to get task data before updating weekend time:', resultGet?.error);
+                     alert('Error: No se pudieron obtener los datos de la tarea para moverla.');
+                     if (window.loadUserData) window.loadUserData(); // Force refresh to revert UI
+                     return; 
+                }
+
+                const currentTaskData = resultGet.task;
+                
+                // Optional: Add capacity check here if needed, using currentTaskData.duration
+                // const tasksInNewSlot = await window.getUserTasks(...); // Requires filtering logic
+                // const totalHours = tasksInNewSlot.reduce(...) + currentTaskData.duration;
+                // if (totalHours > 4) { alert(...); return; }
+
+                // Prepare complete data for update
+                const taskDataForUpdate = {
+                    ...currentTaskData, // Keep existing data
                     day: newDay,
                     time: newTime
-                    // We SHOULD include other fields like title, description, duration here
-                    // fetched from the task with taskId to avoid overwriting them with undefined.
+                    // No need to include id here, updateTask handles it
                 };
+                delete taskDataForUpdate.id; // Remove id if present, Firestore handles it
 
-                const result = await window.updateTask(taskId, taskData);
-                if (result.success) {
+                const resultUpdate = await window.updateTask(taskId, taskDataForUpdate);
+                if (resultUpdate.success) {
                     console.log(`Weekend task ${taskId} moved to ${newDay} ${newTime}`);
                     // UI will be updated by loadUserData called within updateTask
                 } else {
-                    // Handle update error (alert is shown in updateTask)
-                    console.error('Failed to update weekend task time.');
-                    // Maybe force a UI refresh to revert visual drag?
-                    if (window.loadUserData) window.loadUserData();
+                    console.error('Failed to update weekend task time via window.updateTask.');
+                    if (window.loadUserData) window.loadUserData(); // Force refresh
                 }
 
             } catch (error) {
@@ -1412,39 +1414,63 @@
         }
 
         // Open modal for editing task
-        function openEditModal(taskId) {
-            const task = tasks.find(t => t.id === taskId);
+        // MODIFIED: Fetches task data using window.getTask
+        async function openEditModal(taskId) { 
+            if (!taskId) return;
             
-            if (!task) return;
-            
-            document.getElementById('modal-title').textContent = 'Edit Task';
-            document.getElementById('task-id').value = task.id;
-            document.getElementById('task-title').value = task.title;
-            document.getElementById('task-description').value = task.description;
-            document.getElementById('task-view').value = task.view;
-            
-            if (task.view === 'planner') {
-                document.getElementById('task-priority').value = task.priority;
-                document.getElementById('task-due').value = task.due;
-                document.getElementById('task-type').value = task.type;
-                document.getElementById('task-status').value = task.status;
+            try {
+                const result = await window.getTask(taskId);
+                if (!result || !result.success) {
+                     console.error('Failed to get task data for editing:', result?.error);
+                     alert('Error: No se pudieron cargar los datos de esta tarea.');
+                     return;
+                }
+                const task = result.task;
+
+                document.getElementById('modal-title').textContent = 'Edit Task';
+                document.getElementById('task-id').value = task.id;
+                document.getElementById('task-title').value = task.title;
+                document.getElementById('task-description').value = task.description || '';
+                document.getElementById('task-view').value = task.view;
                 
-                plannerFields.classList.remove('hidden');
-                weekendFields.classList.add('hidden');
-            } else {
-                document.getElementById('task-day').value = task.day;
-                document.getElementById('task-time').value = task.time;
-                document.getElementById('task-duration').value = task.duration;
+                if (task.view === 'planner') {
+                    document.getElementById('task-priority').value = task.priority || 'medium';
+                    // Handle potential Firestore Timestamp object for due date
+                    let dueDate = '';
+                    if (task.due) {
+                        if (task.due.toDate) { // Check if it's a Firestore Timestamp
+                           dueDate = task.due.toDate().toISOString().split('T')[0];
+                        } else if (typeof task.due === 'string') {
+                           dueDate = task.due; // Assume it's already YYYY-MM-DD
+                        } else {
+                            console.warn('Unrecognized due date format:', task.due);
+                        }
+                    }
+                    document.getElementById('task-due').value = dueDate;
+                    document.getElementById('task-type').value = task.type || 'mandatory';
+                    document.getElementById('task-status').value = task.status || 'todo';
+                    
+                    plannerFields.classList.remove('hidden');
+                    weekendFields.classList.add('hidden');
+                } else { // Weekend view
+                    document.getElementById('task-day').value = task.day || 'monday';
+                    document.getElementById('task-time').value = task.time || 'morning';
+                    document.getElementById('task-duration').value = task.duration || 1;
+                    
+                    plannerFields.classList.add('hidden');
+                    weekendFields.classList.remove('hidden');
+                }
                 
-                plannerFields.classList.add('hidden');
-                weekendFields.classList.remove('hidden');
+                // Show delete button for existing tasks
+                deleteTaskBtn.classList.remove('hidden');
+                
+                // Show modal
+                taskModal.style.display = 'flex';
+
+            } catch (error) {
+                 console.error('Error opening edit modal:', error);
+                 alert('Error al abrir la edición de la tarea.');
             }
-            
-            // Show delete button for existing tasks
-            deleteTaskBtn.classList.remove('hidden');
-            
-            // Show modal
-            taskModal.style.display = 'flex';
         }
 
         // Close task modal
