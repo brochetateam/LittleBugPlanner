@@ -130,7 +130,7 @@
             background: #c8ebfb;
         }
         
-        .weekend-planner {
+        .week-planner {
             display: none;
         }
         
@@ -229,7 +229,7 @@
             <div class="flex items-center space-x-4">
                 <div class="flex bg-white bg-opacity-20 rounded-full overflow-hidden">
                     <button id="planner-view-btn" class="px-4 py-2 active-view">LibFT</button>
-                    <button id="weekend-view-btn" class="px-4 py-2">Planner</button>
+                    <button id="week-view-btn" class="px-4 py-2">Planner</button>
                 </div>
                 <!-- <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
                     <i class="fas fa-user-graduate mr-2"></i>
@@ -384,7 +384,7 @@
                         <h3 class="font-bold">Subject PDF</h3>
                     </div>
                     <p class="text-sm text-gray-600 mb-3">Official LibFT project subject with requirements and instructions.</p>
-                    <a href="libft_subject.pdf" class="w-full bg-green-50 text-green-700 py-2 rounded-lg font-medium hover:bg-green-100 transition flex items-center justify-center" target="_blank">
+                    <a href="libft_subject.pdf" class="w-full bg-green-50 text-green-700 py-2 rounded-lg font-medium hover:bg-green-100 transition flex items-center justify-center">
                         <i class="fas fa-download mr-2"></i> Download
                     </a>
                 </div>
@@ -418,10 +418,10 @@
         </div>
     </div>
     
-    <!-- Weekend Planner View -->
-    <div id="weekend-planner" class="weekend-planner container mx-auto px-4 py-8">
+    <!-- Week Planner View -->
+    <div id="week-planner" class="week-planner container mx-auto px-4 py-8">
         <div class="bg-white rounded-xl shadow-md p-6 mb-8 bug-theme">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Weekend Planner</h2>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Week Planner</h2>
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
                     <i class="fas fa-calendar-week mr-3 text-xl text-green-600"></i>
@@ -635,7 +635,7 @@
                     </div>
                 </div>
                 
-                <div id="weekend-fields" class="hidden">
+                <div id="week-fields" class="hidden">
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
                             <label for="task-day" class="block text-sm font-medium text-gray-700 mb-1">Day</label>
@@ -702,7 +702,7 @@
                 </div>
             </div>
             <div class="mt-4 pt-4 border-t border-gray-700 text-center text-sm text-gray-400">
-                Made with <i class="fas fa-heart text-red-400"></i> for 42 Academy <!-- by Little Bug -->
+                Made with <i class="fas fa-heart text-red-400"></i> for 42 Academy by Little Bug
             </div>
         </div>
     </footer>
@@ -715,9 +715,9 @@
 
         // DOM elements
         const libftPlanner = document.getElementById('libft-planner');
-        const weekendPlanner = document.getElementById('weekend-planner');
+        const weekPlanner = document.getElementById('week-planner');
         const plannerViewBtn = document.getElementById('planner-view-btn');
-        const weekendViewBtn = document.getElementById('weekend-view-btn');
+        const weekViewBtn = document.getElementById('week-view-btn');
         const taskBoard = document.getElementById('task-board');
         const taskModal = document.getElementById('task-modal');
         const taskForm = document.getElementById('task-form');
@@ -727,7 +727,7 @@
         const addTaskBtns = document.querySelectorAll('.add-task-btn');
         const deleteTaskBtn = document.getElementById('delete-task');
         const plannerFields = document.getElementById('planner-fields');
-        const weekendFields = document.getElementById('weekend-fields');
+        const weekFields = document.getElementById('week-fields');
         const currentWeekDisplay = document.getElementById('current-week');
         
         // Stats elements
@@ -776,14 +776,14 @@
                 tasksData.forEach(task => {
                 if (task.view === 'planner') {
                     renderPlannerTask(task);
-                } else if (task.view === 'weekend') {
-                    renderWeekendTask(task);
+                } else if (task.view === 'week') {
+                    renderWeekTask(task);
                 }
             });
             }
             
-            // Update task counts in weekend planner
-            updateWeekendTaskCounts(tasksData);
+            // Update task counts in week planner
+            updateWeekTaskCounts(tasksData);
         }
 
         // Render a single planner task to the board
@@ -848,8 +848,8 @@
             taskElement.addEventListener('dblclick', () => openEditModal(task.id));
         }
 
-        // Render a single weekend task to the board
-        function renderWeekendTask(task) {
+        // Render a single week task to the board
+        function renderWeekTask(task) {
             const taskList = document.querySelector(`.week-tasks[data-day="${task.day}"][data-time="${task.time}"]`);
             
             if (!taskList) return;
@@ -972,15 +972,15 @@
             return `${diffDays} days ago`;
         }
 
-        // Update task counts in weekend planner
-        function updateWeekendTaskCounts(tasksData) {
+        // Update task counts in week planner
+        function updateWeekTaskCounts(tasksData) {
             const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             const times = ['morning', 'afternoon'];
             
             days.forEach(day => {
                 times.forEach(time => {
                     const tasksInSlot = Array.isArray(tasksData) ? tasksData.filter(task => 
-                        task.view === 'weekend' && 
+                        task.view === 'week' && 
                         task.day === day && 
                         task.time === time
                     ) : [];
@@ -1104,28 +1104,28 @@
             // View toggle buttons
             plannerViewBtn.addEventListener('click', () => {
                 libftPlanner.style.display = 'block';
-                weekendPlanner.style.display = 'none';
+                weekPlanner.style.display = 'none';
                 plannerViewBtn.classList.add('active-view');
-                weekendViewBtn.classList.remove('active-view');
+                weekViewBtn.classList.remove('active-view');
                 document.getElementById('task-view').value = 'planner';
             });
             
-            weekendViewBtn.addEventListener('click', () => {
+            weekViewBtn.addEventListener('click', () => {
                 libftPlanner.style.display = 'none';
-                weekendPlanner.style.display = 'block';
+                weekPlanner.style.display = 'block';
                 plannerViewBtn.classList.remove('active-view');
-                weekendViewBtn.classList.add('active-view');
-                document.getElementById('task-view').value = 'weekend';
+                weekViewBtn.classList.add('active-view');
+                document.getElementById('task-view').value = 'week';
             });
             
             // New task button
             newTaskBtn.addEventListener('click', () => {
-                const currentView = weekendPlanner.style.display === 'block' ? 'weekend' : 'planner';
+                const currentView = weekPlanner.style.display === 'block' ? 'week' : 'planner';
                 openNewModal(currentView);
             });
             
             // Add week task button
-            addWeekTaskBtn.addEventListener('click', () => openNewModal('weekend'));
+            addWeekTaskBtn.addEventListener('click', () => openNewModal('week'));
             
             // Add task buttons in each column
             addTaskBtns.forEach(btn => {
@@ -1239,7 +1239,7 @@
                 if (draggedItem && currentDropzone) {
                     const taskId = draggedItem.getAttribute('data-task-id'); // Get task ID from dragged item
                     
-                    // Determine if it's planner or weekend view drop
+                    // Determine if it's planner or week view drop
                     if (currentDropzone.hasAttribute('data-status')) {
                         // Planner drop
                         const newStatus = currentDropzone.getAttribute('data-status');
@@ -1258,7 +1258,7 @@
                         }
 
                     } else if (currentDropzone.hasAttribute('data-day') && currentDropzone.hasAttribute('data-time')) {
-                        // Weekend drop
+                        // Week drop
                         const newDay = currentDropzone.getAttribute('data-day');
                         const newTime = currentDropzone.getAttribute('data-time');
                         const taskElement = document.querySelector(`.week-task[data-task-id='${taskId}']`);
@@ -1267,9 +1267,9 @@
 
                         if (newDay && newTime && (oldDay !== newDay || oldTime !== newTime)){
                              // Call the local function which handles validation and calls window.updateTask
-                        updateWeekendTaskTime(taskId, newDay, newTime);
+                        updateWeekTaskTime(taskId, newDay, newTime);
                         } else {
-                             console.log("Weekend task dropped in the same slot or invalid drop.");
+                             console.log("Week task dropped in the same slot or invalid drop.");
                         }
                        
                     } else {
@@ -1334,50 +1334,54 @@
             }
         }
 
-        // Update weekend task day/time
-        async function updateWeekendTaskTime(taskId, newDay, newTime) {
-            if (!taskId) return;
+        // Update week task day/time
+        async function updateWeekTaskTime(taskId, newDay, newTime) {
             
+            if (!window.getTaskData || !window.updateTask) {
+                console.error('Required functions (getTaskData/updateTask) not found on window');
+                alert('Error: No se pueden mover las tareas ahora mismo.');
+                return;
+            }
+
             try {
-                // Get current task data first
-                const resultGet = await window.getTask(taskId);
+                // 1. Get current task data
+                const resultGet = await window.getTaskData(taskId);
                 
-                if (!resultGet || !resultGet.success) {
-                     console.error('Failed to get task data before updating weekend time:', resultGet?.error);
-                     alert('Error: No se pudieron obtener los datos de la tarea para moverla.');
-                     if (window.loadUserData) window.loadUserData(); // Force refresh to revert UI
-                     return; 
+                if (!resultGet.success) {
+                    throw new Error(resultGet.error || 'No se pudo obtener la información de la tarea.');
                 }
-
                 const currentTaskData = resultGet.task;
-                
-                // Optional: Add capacity check here if needed, using currentTaskData.duration
-                // const tasksInNewSlot = await window.getUserTasks(...); // Requires filtering logic
-                // const totalHours = tasksInNewSlot.reduce(...) + currentTaskData.duration;
-                // if (totalHours > 4) { alert(...); return; }
 
-                // Prepare complete data for update
-                const taskDataForUpdate = {
+                // 2. (Optional but recommended) Add capacity validation here 
+                //    using currentTaskData.duration and fetching tasks in the target slot.
+                //    Skipping for now for simplicity.
+
+                // 3. Prepare the *complete* data object for update
+                const updatedTaskData = {
                     ...currentTaskData, // Keep existing data
-                    day: newDay,
-                    time: newTime
-                    // No need to include id here, updateTask handles it
+                    day: newDay,         // Update day
+                    time: newTime        // Update time
                 };
-                delete taskDataForUpdate.id; // Remove id if present, Firestore handles it
+                // Remove the ID from the data object itself if it exists, as it's passed separately
+                delete updatedTaskData.id; 
 
-                const resultUpdate = await window.updateTask(taskId, taskDataForUpdate);
+                // 4. Call updateTask with the complete data
+                const resultUpdate = await window.updateTask(taskId, updatedTaskData);
+                
                 if (resultUpdate.success) {
-                    console.log(`Weekend task ${taskId} moved to ${newDay} ${newTime}`);
-                    // UI will be updated by loadUserData called within updateTask
+                    console.log(`Week task ${taskId} moved to ${newDay} ${newTime}`);
+                    // UI updates automatically via loadUserData called in updateTask
                 } else {
-                    console.error('Failed to update weekend task time via window.updateTask.');
-                    if (window.loadUserData) window.loadUserData(); // Force refresh
+                    // Error alert is likely shown within updateTask
+                    console.error('Failed to update week task time via window.updateTask.');
+                    // Force UI refresh to revert visual drag?
+                    if (window.loadUserData) window.loadUserData(); 
                 }
 
             } catch (error) {
-                console.error('Error in updateWeekendTaskTime:', error);
-                alert('Error al mover la tarea de fin de semana.');
-                 if (window.loadUserData) window.loadUserData(); // Revert UI
+                console.error('Error in updateWeekTaskTime:', error);
+                alert('Error al mover la tarea de la semana: ' + error.message);
+                 if (window.loadUserData) window.loadUserData(); // Revert UI on unexpected errors
             }
         }
 
@@ -1396,14 +1400,14 @@
                 document.getElementById('task-status').value = status;
                 
                 plannerFields.classList.remove('hidden');
-                weekendFields.classList.add('hidden');
+                weekFields.classList.add('hidden');
             } else {
                 document.getElementById('task-day').value = 'monday';
                 document.getElementById('task-time').value = 'morning';
                 document.getElementById('task-duration').value = '1';
                 
                 plannerFields.classList.add('hidden');
-                weekendFields.classList.remove('hidden');
+                weekFields.classList.remove('hidden');
             }
             
             // Hide delete button for new tasks
@@ -1414,36 +1418,41 @@
         }
 
         // Open modal for editing task
-        // MODIFIED: Fetches task data using window.getTask
+        // MODIFIED: Fetches task data from Firestore first
         async function openEditModal(taskId) { 
-            if (!taskId) return;
             
-            try {
-                const result = await window.getTask(taskId);
-                if (!result || !result.success) {
-                     console.error('Failed to get task data for editing:', result?.error);
-                     alert('Error: No se pudieron cargar los datos de esta tarea.');
-                     return;
-                }
-                const task = result.task;
+            if (!window.getTaskData) {
+                console.error('getTaskData function not found on window');
+                alert('Error: No se puede cargar la tarea para editar.');
+                return;
+            }
 
+            try {
+                // 1. Fetch task data using the global function
+                const resultGet = await window.getTaskData(taskId);
+
+                if (!resultGet.success) {
+                    throw new Error(resultGet.error || 'No se encontró la tarea para editar.');
+                }
+                const task = resultGet.task;
+
+                // 2. Populate the modal form with fetched data
                 document.getElementById('modal-title').textContent = 'Edit Task';
-                document.getElementById('task-id').value = task.id;
-                document.getElementById('task-title').value = task.title;
+                document.getElementById('task-id').value = task.id; // Use the ID from fetched data
+                document.getElementById('task-title').value = task.title || '';
                 document.getElementById('task-description').value = task.description || '';
                 document.getElementById('task-view').value = task.view;
                 
                 if (task.view === 'planner') {
                     document.getElementById('task-priority').value = task.priority || 'medium';
-                    // Handle potential Firestore Timestamp object for due date
+                    // Handle date formatting (Firestore might return Timestamp or string)
                     let dueDate = '';
                     if (task.due) {
-                        if (task.due.toDate) { // Check if it's a Firestore Timestamp
-                           dueDate = task.due.toDate().toISOString().split('T')[0];
+                        if (task.due.toDate) { // Firestore Timestamp
+                            dueDate = task.due.toDate().toISOString().split('T')[0];
                         } else if (typeof task.due === 'string') {
-                           dueDate = task.due; // Assume it's already YYYY-MM-DD
-                        } else {
-                            console.warn('Unrecognized due date format:', task.due);
+                             // Assume YYYY-MM-DD format if string
+                            dueDate = task.due.split('T')[0]; 
                         }
                     }
                     document.getElementById('task-due').value = dueDate;
@@ -1451,14 +1460,14 @@
                     document.getElementById('task-status').value = task.status || 'todo';
                     
                     plannerFields.classList.remove('hidden');
-                    weekendFields.classList.add('hidden');
-                } else { // Weekend view
+                    weekFields.classList.add('hidden');
+                } else { // Week view
                     document.getElementById('task-day').value = task.day || 'monday';
                     document.getElementById('task-time').value = task.time || 'morning';
                     document.getElementById('task-duration').value = task.duration || 1;
                     
                     plannerFields.classList.add('hidden');
-                    weekendFields.classList.remove('hidden');
+                    weekFields.classList.remove('hidden');
                 }
                 
                 // Show delete button for existing tasks
@@ -1468,8 +1477,8 @@
                 taskModal.style.display = 'flex';
 
             } catch (error) {
-                 console.error('Error opening edit modal:', error);
-                 alert('Error al abrir la edición de la tarea.');
+                console.error('Error opening edit modal:', error);
+                alert('Error al cargar la tarea para editar: ' + error.message);
             }
         }
 
@@ -1500,7 +1509,7 @@
                     type: document.getElementById('task-type').value,
                     status: document.getElementById('task-status').value,
                 };
-            } else { // Weekend view
+            } else { // Week view
                 const duration = parseFloat(document.getElementById('task-duration').value);
                  // Basic duration validation (more might be needed)
                  if (isNaN(duration) || duration <= 0) {
@@ -1657,7 +1666,7 @@
                                 due: task.due || null,
                                 type: task.type || 'mandatory',
                                 status: task.status || 'todo',
-                                // Weekend specific fields
+                                // Week specific fields
                                 day: task.day || null,
                                 time: task.time || null,
                                 duration: task.duration || null,
@@ -1668,8 +1677,8 @@
 
                             // Validate required fields based on view
                             if (taskData.view === 'planner' && !taskData.status) taskData.status = 'todo';
-                            if (taskData.view === 'weekend' && (!taskData.day || !taskData.time || !taskData.duration)){
-                                console.warn('Tarea de fin de semana omitida por falta de day/time/duration:', task);
+                            if (taskData.view === 'week' && (!taskData.day || !taskData.time || !taskData.duration)){
+                                console.warn('Tarea de semana omitida por falta de day/time/duration:', task);
                                 errorCount++;
                                 continue;
                             }
@@ -1708,5 +1717,7 @@
         // Initialize the app
         init();
     </script>
+    <!-- Añadir DragDropTouch para soporte táctil -->
+    <script src="https://unpkg.com/dragdroptouch"></script> 
 </body>
 </html>

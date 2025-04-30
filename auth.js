@@ -9,9 +9,11 @@ import {
     addTaskToFirestore, // New function
     updateTaskInFirestore, // New function
     deleteTaskFromFirestore, // New function
-    onAuthStateChange,
-    getTask as getTaskFirestore
+    onAuthStateChange 
 } from './firebase-config.js';
+// Import getDoc and doc for getTaskData
+import { getDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { db } from './firebase-config.js'; // Import db instance
 
 // DOM Elements
 let currentUser = null;
@@ -452,120 +454,26 @@ const updateTask = async (taskId, taskData) => {
   }
 };
 
-// Drag and Drop Handlers (simplified, might need adjustment)
-// REMOVING THESE HANDLERS FROM AUTH.JS TO AVOID CONFLICTS
-/*
-let draggedTaskId = null;
-
-const handleDragStart = (e) => {
-    if (e.target.classList.contains('task-card') || e.target.classList.contains('week-task')) {
-        draggedTaskId = e.target.getAttribute('data-task-id');
-        e.dataTransfer.setData('text/plain', draggedTaskId);
-        // Use timeout to allow original element to be painted before adding class
-        setTimeout(() => {
-            e.target.classList.add('dragging'); 
-        }, 0);
+// Function to get a single task's data
+const getTaskData = async (taskId) => {
+  if (!currentUser) {
+    console.error('Cannot get task data: User not logged in.');
+    return { success: false, error: 'User not logged in' };
+  }
+  try {
+    const taskRef = doc(db, "users", currentUser.uid, "tasks", taskId);
+    const docSnap = await getDoc(taskRef);
+    if (docSnap.exists()) {
+      return { success: true, task: { id: docSnap.id, ...docSnap.data() } };
     } else {
-        e.preventDefault(); // Prevent dragging other elements
+      console.error("No such task found in Firestore!");
+      return { success: false, error: 'Task not found' };
     }
+  } catch (error) {
+    console.error("Error getting task data: ", error);
+    return { success: false, error: error.message };
+  }
 };
-
-const handleDragEnd = (e) => {
-    if (draggedTaskId) {
-        // Find the element and remove dragging class
-        const draggedElement = document.querySelector(`[data-task-id='${draggedTaskId}']`);
-        if (draggedElement) {
-            draggedElement.classList.remove('dragging');
-        }
-    }
-    draggedTaskId = null;
-    // Remove dropzone highlights (might be handled in index.html already)
-    document.querySelectorAll('.dropzone.active').forEach(dz => dz.classList.remove('active'));
-};
-
-const setupDropzones = () => {
-    const dropzones = document.querySelectorAll('.dropzone');
-    
-    dropzones.forEach(zone => {
-        // Remove old listeners first to prevent duplicates if called multiple times
-        zone.removeEventListener('dragover', handleDragOver);
-        zone.removeEventListener('dragenter', handleDragEnter);
-        zone.removeEventListener('dragleave', handleDragLeave);
-        zone.removeEventListener('drop', handleDrop);
-        
-        // Add new listeners
-        zone.addEventListener('dragover', handleDragOver);
-        zone.addEventListener('dragenter', handleDragEnter);
-        zone.addEventListener('dragleave', handleDragLeave);
-        zone.addEventListener('drop', handleDrop);
-    });
-};
-
-const handleDragOver = (e) => {
-    e.preventDefault(); // Necessary to allow dropping
-    e.dataTransfer.dropEffect = 'move';
-};
-
-const handleDragEnter = (e) => {
-    e.preventDefault();
-    if (e.target.classList.contains('dropzone')) {
-        e.target.classList.add('active');
-    }
-};
-
-const handleDragLeave = (e) => {
-    if (e.target.classList.contains('dropzone')) {
-        // Only remove active if leaving the dropzone itself, not its children
-        if (!e.target.contains(e.relatedTarget)) {
-            e.target.classList.remove('active');
-        }
-    }
-};
-
-const handleDrop = (e) => {
-    e.preventDefault();
-    if (e.target.classList.contains('dropzone')) {
-        e.target.classList.remove('active');
-        
-        const taskId = e.dataTransfer.getData('text/plain');
-        const dropzoneElement = e.target.closest('.dropzone'); // Ensure we get the dropzone
-        
-        if (!taskId || !dropzoneElement) return;
-
-        // Determine if it's planner or weekend view drop
-        if (dropzoneElement.hasAttribute('data-status')) {
-             // Planner drop
-            const newStatus = dropzoneElement.getAttribute('data-status');
-            const taskElement = document.querySelector(`.task-card[data-task-id='${taskId}']`); // Find the task card
-            const oldStatus = taskElement?.closest('.dropzone')?.getAttribute('data-status');
-
-            if (newStatus && oldStatus !== newStatus) {
-                updateTaskStatus(taskId, newStatus);
-            } else {
-                console.log("Planner task dropped in the same column or invalid drop.");
-            }
-        } else if (dropzoneElement.hasAttribute('data-day') && dropzoneElement.hasAttribute('data-time')) {
-            // Weekend drop
-            const newDay = dropzoneElement.getAttribute('data-day');
-            const newTime = dropzoneElement.getAttribute('data-time');
-            
-            // We need the task data (duration) to validate drop. 
-            // This requires either fetching task data here or index.html handling the drop fully.
-            // For now, let's call a function that *should* be in index.html
-            if (window.handleWeekendDrop) {
-                window.handleWeekendDrop(taskId, newDay, newTime);
-            } else {
-                 console.warn('window.handleWeekendDrop not found. Cannot validate weekend drop.');
-                 // Maybe try a basic update without validation? (Risky)
-                 // updateWeekendTaskTime(taskId, newDay, newTime); // This function doesn't exist here yet
-            }
-           
-        } else {
-             console.log('Dropped on an unrecognized dropzone');
-        }
-    }
-};
-*/
 
 // Initialize auth state observer
 const initAuthObserver = () => {
@@ -604,6 +512,7 @@ export {
     currentUser, 
     clearTasksUI, 
     loadUserData, 
+    getTaskData // Export getTaskData
 };
 
 // Expose functions globally for index.html script
@@ -619,17 +528,7 @@ window.getUserTasks = async () => { // Wrap getUserTasks to ensure currentUser i
     }
     return await getUserTasksFirestore(currentUser.uid);
 };
-window.getTask = async (taskId) => { // Wrap getTask
-    if (!currentUser) {
-        console.error('Cannot get task: User not logged in.');
-        return { success: false, error: 'User not logged in' };
-    }
-    if (!taskId) {
-        console.error('Cannot get task: No task ID provided.');
-        return { success: false, error: 'No task ID provided' };
-    }
-    return await getTaskFirestore(currentUser.uid, taskId);
-};
+window.getTaskData = getTaskData; // Expose getTaskData
 
 // Auto-initialize when imported directly
 initApp();
