@@ -27,7 +27,7 @@ const initAuthUI = () => {
       <div id="auth-modal" class="modal">
         <div class="modal-content">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold text-gray-800" id="auth-modal-title">Iniciar Sesión</h2>
+            <h2 class="text-2xl font-bold text-gray-800" id="auth-modal-title">Sign In</h2>
             <button class="text-gray-500 hover:text-gray-700" id="close-auth-modal">
               <i class="fas fa-times"></i>
             </button>
@@ -38,18 +38,18 @@ const initAuthUI = () => {
           <div id="login-form">
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
-              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="email@ejemplo.com">
+              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="email@example.com">
             </div>
             <div class="mb-6">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Contraseña</label>
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
               <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********">
             </div>
             <div class="flex items-center justify-between">
               <button id="login-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Iniciar Sesión
+                Sign In
               </button>
               <button id="switch-to-register" class="inline-block align-baseline font-bold text-sm text-green-600 hover:text-green-800">
-                Crear Cuenta
+                Create Account
               </button>
             </div>
           </div>
@@ -57,22 +57,22 @@ const initAuthUI = () => {
           <div id="register-form" class="hidden">
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="register-email">Email</label>
-              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="register-email" type="email" placeholder="email@ejemplo.com">
+              <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="register-email" type="email" placeholder="email@example.com">
             </div>
             <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="register-password">Contraseña</label>
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="register-password">Password</label>
               <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="register-password" type="password" placeholder="********">
             </div>
             <div class="mb-6">
-              <label class="block text-gray-700 text-sm font-bold mb-2" for="register-password-confirm">Confirmar Contraseña</label>
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="register-password-confirm">Confirm Password</label>
               <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="register-password-confirm" type="password" placeholder="********">
             </div>
             <div class="flex items-center justify-between">
               <button id="register-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Registrarse
+                Register
               </button>
               <button id="switch-to-login" class="inline-block align-baseline font-bold text-sm text-green-600 hover:text-green-800">
-                Ya tengo cuenta
+                I already have an account
               </button>
             </div>
           </div>
@@ -96,7 +96,7 @@ const initAuthUI = () => {
     const authButtonsHTML = `
       <div id="auth-buttons" class="flex space-x-2">
         <button id="login-btn" class="bg-white text-green-700 px-4 py-2 rounded-full font-bold hover:bg-gray-100 transition">
-          <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
+          <i class="fas fa-sign-in-alt mr-2"></i> Sign In
         </button>
       </div>
       <div id="user-menu" class="hidden flex space-x-2">
@@ -105,7 +105,7 @@ const initAuthUI = () => {
           <span id="user-email"></span>
         </div>
         <button id="logout-btn" class="bg-red-500 text-white px-3 py-2 rounded-full font-bold hover:bg-red-600 transition text-sm">
-          <i class="fas fa-sign-out-alt mr-1"></i> Salir
+          <i class="fas fa-sign-out-alt mr-1"></i> Sign Out
         </button>
       </div>
     `;
@@ -133,14 +133,14 @@ const closeAuthModal = () => {
 const switchToRegister = () => {
   document.getElementById('login-form').classList.add('hidden');
   document.getElementById('register-form').classList.remove('hidden');
-  document.getElementById('auth-modal-title').textContent = 'Crear Cuenta';
+  document.getElementById('auth-modal-title').textContent = 'Create Account';
   document.getElementById('auth-error').classList.add('hidden');
 };
 
 const switchToLogin = () => {
   document.getElementById('register-form').classList.add('hidden');
   document.getElementById('login-form').classList.remove('hidden');
-  document.getElementById('auth-modal-title').textContent = 'Iniciar Sesión';
+  document.getElementById('auth-modal-title').textContent = 'Sign In';
   document.getElementById('auth-error').classList.add('hidden');
 };
 
@@ -182,7 +182,7 @@ const handleLogin = async () => {
   const password = document.getElementById('password').value;
   
   if (!email || !password) {
-    showAuthError('Por favor, completa todos los campos');
+    showAuthError('Please complete all fields');
     return;
   }
   
@@ -193,10 +193,10 @@ const handleLogin = async () => {
       // currentUser = result.user; // Set by observer
       // loadUserData(); // Triggered by observer
     } else {
-      showAuthError(result.error || 'Error al iniciar sesión');
+      showAuthError(result.error || 'Error signing in');
     }
   } catch (error) {
-    showAuthError('Error al iniciar sesión: ' + error.message);
+    showAuthError('Error signing in: ' + error.message);
   }
 };
 
@@ -206,12 +206,12 @@ const handleRegister = async () => {
   const confirmPassword = document.getElementById('register-password-confirm').value;
   
   if (!email || !password || !confirmPassword) {
-    showAuthError('Por favor, completa todos los campos');
+    showAuthError('Please complete all fields');
     return;
   }
   
   if (password !== confirmPassword) {
-    showAuthError('Las contraseñas no coinciden');
+    showAuthError('Passwords do not match');
     return;
   }
   
@@ -239,7 +239,7 @@ const handleLogout = async () => {
     // loadDefaultTasks(); // Remove loading default tasks on logout
     clearTasksUI(); // Add a function to clear the UI
   } catch (error) {
-    console.error('Error al cerrar sesión:', error);
+    console.error('Error signing out:', error);
   }
 };
 
@@ -294,7 +294,7 @@ const saveTasksToFirebase = async () => {
   try {
     await saveUserTasks(currentUser.uid, tasks);
   } catch (error) {
-    console.error('Error al guardar tareas:', error);
+    console.error('Error saving tasks:', error);
   }
 };
 */
@@ -307,7 +307,7 @@ const loadDefaultTasks = async () => {
     tasks = await response.json();
     renderTasks();
   } catch (error) {
-    console.error('Error al cargar tareas predeterminadas:', error);
+    console.error('Error loading default tasks:', error);
     tasks = [];
     renderTasks();
   }
@@ -328,7 +328,7 @@ const clearTasksUI = () => {
 // Function to add a new task - uses Firestore
 const addTask = async (taskData) => {
   if (!currentUser) {
-    alert('Debes iniciar sesión para añadir tareas.');
+    alert('You must be signed in to add tasks.');
     return { success: false, error: 'User not logged in' };
   }
   
@@ -346,7 +346,7 @@ const addTask = async (taskData) => {
     }
   } catch (error) {
     console.error('Error in addTask:', error);
-    alert('Error al añadir la tarea: ' + error.message);
+    alert('Error adding task: ' + error.message);
     return { success: false, error: error.message };
   }
 };
@@ -366,11 +366,11 @@ const editTask = (taskId, taskStatus) => { // Accept status or fetch it if neede
 // Function to delete a task - uses Firestore
 const deleteTask = async (taskId) => {
   if (!currentUser) {
-    alert('Debes iniciar sesión para borrar tareas.');
+    alert('You must be signed in to delete tasks.');
     return;
   }
   
-  if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
+  if (confirm('Are you sure you want to delete this task?')) {
     try {
       const result = await deleteTaskFromFirestore(currentUser.uid, taskId);
       if (result.success) {
@@ -381,7 +381,7 @@ const deleteTask = async (taskId) => {
       }
     } catch (error) {
       console.error('Error in deleteTask:', error);
-      alert('Error al eliminar la tarea: ' + error.message);
+      alert('Error deleting the task: ' + error.message);
     }
   }
 };
@@ -389,7 +389,7 @@ const deleteTask = async (taskId) => {
 // Function to update task status - uses Firestore
 const updateTaskStatus = async (taskId, newStatus) => {
   if (!currentUser) {
-    alert('Debes iniciar sesión para actualizar tareas.');
+    alert('You must be signed in to update tasks.');
     return;
   }
   
@@ -420,14 +420,14 @@ const updateTaskStatus = async (taskId, newStatus) => {
     }
   } catch (error) {
     console.error('Error in updateTaskStatus:', error);
-    alert('Error al actualizar el estado de la tarea: ' + error.message);
+    alert('Error updating task status: ' + error.message);
   }
 };
 
 // Function to update a task completely - uses Firestore
 const updateTask = async (taskId, taskData) => {
   if (!currentUser) {
-    alert('Debes iniciar sesión para actualizar tareas.');
+    alert('You must be signed in to update tasks.');
     return { success: false, error: 'User not logged in' };
   }
 
@@ -449,7 +449,7 @@ const updateTask = async (taskId, taskData) => {
     }
   } catch (error) {
     console.error('Error in updateTask:', error);
-    alert('Error al actualizar la tarea: ' + error.message);
+    alert('Error updating task: ' + error.message);
     return { success: false, error: error.message };
   }
 };

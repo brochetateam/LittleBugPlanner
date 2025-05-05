@@ -1,5 +1,6 @@
 // jokes.js
 export const jokes = [
+  // Spanish jokes
   "¿Por qué los programadores confunden Halloween y Navidad? Porque OCT 31 = DEC 25.",
   "¿Cuántos programadores hacen falta para cambiar una bombilla? Ninguno, eso es un problema de hardware.",
   "¿Por qué el código fue al médico? Porque tenía un bug.",
@@ -19,5 +20,27 @@ export const jokes = [
   "¿Cuál es el lema de Little Bug? 'Si puedes soñarlo, puedes programarlo... y planificarlo'.",
   "¿Qué le dice Little Bug a una tarea sin terminar? 'Te veo mañana en la misma columna'.",
   "¿Por qué Little Bug es tan productivo? Porque cada error lo ve como una característica no planificada.",
-  "¿Cómo resuelve Little Bug un problema complejo? Lo divide en pequeñas tareas y las arrastra una a una."
+  "¿Cómo resuelve Little Bug un problema complejo? Lo divide en pequeñas tareas y las arrastra una a una.",
+  
+  // English jokes
+  "Why do programmers confuse Halloween and Christmas? Because OCT 31 = DEC 25.",
+  "How many programmers does it take to change a light bulb? None, that's a hardware problem.",
+  "Why did the code go to the doctor? Because it had a bug.",
+  "What does one bit say to another bit? I'll see you on the bus.",
+  "Why did Java go to the gym? To get JavaScript.",
+  "Why do programmers always mix up left and right? Because they can't find the pointer.",
+  "Why did the computer go to the doctor? Because it had a virus.",
+  "What's a programmer's favorite animal? The bug.",
+  "Why do programmers hate nature? It has too many bugs.",
+  "What does a programmer do when they're cold? They close the windows.",
+  "Why does Little Bug never lose track of tasks? Because they're always well-planned.",
+  "What does one Little Bug say to another? Let's plan our code invasion!",
+  "Why is Little Bug the best planner? Because it always finds bugs before they appear.",
+  "How does Little Bug organize its day? By dividing time into manageable bytes.",
+  "What does Little Bug do when it has too many tasks? Drags them to the 'tomorrow' column.",
+  "Why is Little Bug always on time? Because it has a planner that doesn't allow system delays.",
+  "What's Little Bug's motto? 'If you can dream it, you can code it... and plan it'.",
+  "What does Little Bug say to an unfinished task? 'See you tomorrow in the same column'.",
+  "Why is Little Bug so productive? Because it sees every error as an unplanned feature.",
+  "How does Little Bug solve a complex problem? By breaking it into small tasks and dragging them one by one."
 ];

@@ -150,7 +150,7 @@
         }
         
         .day-divider::after {
-            content: 'Mediodía';
+            content: 'Noon';
             position: absolute;
             top: -10px;
             left: 50%;
@@ -173,7 +173,7 @@
         }
         
         .time-slot::after {
-            content: '4 horas';
+            content: '4 hours';
             position: absolute;
             top: 5px;
             right: 5px;
@@ -237,10 +237,10 @@
                 </div> -->
                 <div class="flex space-x-2">
                     <!-- <button id="export-data-btn" class="bg-blue-500 text-white px-3 py-2 rounded-full font-bold hover:bg-blue-600 transition text-sm">
-                        <i class="fas fa-download mr-1"></i> Exportar
+                        <i class="fas fa-download mr-1"></i> Export
                     </button>
                     <button id="import-data-btn" class="bg-purple-500 text-white px-3 py-2 rounded-full font-bold hover:bg-purple-600 transition text-sm">
-                        <i class="fas fa-upload mr-1"></i> Importar
+                        <i class="fas fa-upload mr-1"></i> Import
                     </button> -->
                     <button id="new-task-btn" class="bg-white text-green-700 px-4 py-2 rounded-full font-bold hover:bg-gray-100 transition">
                         <i class="fas fa-plus mr-2"></i> New Task
@@ -859,7 +859,7 @@
             taskElement.setAttribute('draggable', 'true');
             taskElement.setAttribute('data-task-id', task.id);
             
-            // Añadir clase de advertencia si la duración excede 4 horas
+            // Add warning class if duration exceeds 4 hours
             const durationClass = task.duration > 4 ? 'bg-red-100 border border-red-300' : '';
             
             taskElement.innerHTML = `
@@ -878,7 +878,7 @@
             
             taskList.appendChild(taskElement);
             
-            // Añadir clase de advertencia al elemento si excede 4 horas
+            // Add warning class to element if it exceeds 4 hours
             if (task.duration > 4) {
                 taskElement.classList.add('bg-red-50', 'border', 'border-red-200');
             }
@@ -997,7 +997,7 @@
                         badge.className = totalHours > 4 ? 'text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full' : 'text-xs bg-gray-100 px-2 py-1 rounded-full';
                     }
                     
-                    // Añadir barra de progreso para mostrar visualmente las horas utilizadas
+                    // Add progress bar to visually show hours used
                     let progressBar = timeSlot.querySelector('.hours-progress');
                     
                     if (!progressBar) {
@@ -1019,7 +1019,7 @@
                     const progressFill = progressBar.querySelector('div');
                     progressFill.style.width = `${hoursPercentage}%`;
                     progressFill.style.backgroundColor = totalHours > 4 ? '#f87171' : (totalHours > 3 ? '#fcd34d' : '#4ade80');
-                    progressFill.title = `${totalHours}/4 horas utilizadas`;
+                    progressFill.title = `${totalHours}/4 hours used`;
                     
                     // Cambiar el estilo del bloque de tiempo si está sobrecargado
                     if (totalHours > 4) {
@@ -1513,13 +1513,13 @@
                 const duration = parseFloat(document.getElementById('task-duration').value);
                  // Basic duration validation (more might be needed)
                  if (isNaN(duration) || duration <= 0) {
-                     alert('Por favor, introduce una duración válida (horas).');
+                     alert('Please enter a valid duration (hours).');
                      return;
                  }
                  // !! Capacity check during drop/update is better than here !!
                  /*
                 if (duration > 4) {
-                     alert('Las tareas no pueden exceder 4 horas por bloque de tiempo.');
+                     alert('Tasks cannot exceed 4 hours per time block.');
                     return;
                  }
                  */
@@ -1532,14 +1532,14 @@
             }
 
              if (!taskData.title) {
-                alert('Por favor, ingresa un título para la tarea');
+                alert('Please enter a title for the task');
                 return;
             }
 
             // Disable button
             const saveButton = taskForm.querySelector('button[type="submit"]');
             saveButton.disabled = true;
-            saveButton.textContent = 'Guardando...';
+            saveButton.textContent = 'Saving...';
 
             try {
                 let result;
@@ -1561,7 +1561,7 @@
             } catch (error) {
                 // Catch any unexpected errors during the async call
                 console.error('Error during handleTaskSubmit:', error);
-                alert('Ocurrió un error inesperado al guardar la tarea.');
+                alert('An unexpected error occurred while saving the task.');
             } finally {
                 // Re-enable button regardless of outcome
                 saveButton.disabled = false;
@@ -1645,7 +1645,7 @@
                             // Maybe add more robust validation here
                         }
 
-                        if (!confirm(`Se intentarán importar ${importedTasksRaw.length} tareas. ¿Continuar?`)) {
+                        if (!confirm(`${importedTasksRaw.length} tasks will be imported. Continue?`)) {
                             return;
                         }
 
@@ -1658,7 +1658,7 @@
                         for (const task of importedTasksRaw) {
                              // Prepare data, removing potential Firestore IDs and ensuring fields exist
                             const taskData = {
-                                title: task.title || 'Sin Título',
+                                title: task.title || 'No Title',
                                 description: task.description || '',
                                 view: task.view || 'planner', // Default view
                                 // Planner specific fields
@@ -1717,29 +1717,29 @@
         // Initialize the app
         init();
     </script>
-    <!-- Añadir DragDropTouch para soporte táctil -->
+    <!-- Add DragDropTouch for touch support -->
     <script src="https://unpkg.com/dragdroptouch"></script> 
     <div id="joke-modal" class="modal" style="display:none;">
         <div class="modal-content bug-theme text-center p-6 border-4 border-green-400 shadow-xl transform transition-all">
             <div class="bug-icon mb-4">
                 <i class="fas fa-bug text-4xl text-green-600"></i>
             </div>
-            <h2 class="text-2xl font-bold mb-4 text-green-700">¡Little Bug te cuenta!</h2>
+            <h2 class="text-2xl font-bold mb-4 text-green-700">Little Bug tells you!</h2>
             <div class="bg-white p-4 rounded-lg shadow-inner mb-6">
                 <p id="joke-text" class="mb-2 text-gray-700 text-lg"></p>
-                <p class="text-sm text-green-600 italic">* Programando con humor desde 42 Academy *</p>
+                <p class="text-sm text-green-600 italic">* Coding with humor from 42 Academy *</p>
             </div>
             <button id="close-joke-modal" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-bold hover:from-green-600 hover:to-green-700 transition transform hover:scale-105">
-                <i class="fas fa-laugh-beam mr-2"></i> ¡Entendido!
+                <i class="fas fa-laugh-beam mr-2"></i> Got it!
             </button>
         </div>
     </div>
     <script type="module">
     import { jokes } from './jokes.js';
     window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => mostrarChiste(), 1000); // Pequeño retraso para mejor experiencia
+        setTimeout(() => showJoke(), 1000); // Small delay for better experience
     });
-    function mostrarChiste() {
+    function showJoke() {
         const modal = document.getElementById('joke-modal');
         const jokeText = document.getElementById('joke-text');
         const closeBtn = document.getElementById('close-joke-modal');
@@ -1747,7 +1747,7 @@
         const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
         jokeText.textContent = randomJoke;
         
-        // Mostrar modal con animación
+        // Show modal with animation
         modal.style.display = 'flex';
         modal.style.opacity = '0';
         setTimeout(() => {
@@ -1756,7 +1756,7 @@
         }, 10);
         
         closeBtn.onclick = () => {
-            // Ocultar modal con animación
+            // Hide modal with animation
             modal.style.opacity = '0';
             setTimeout(() => {
                 modal.style.display = 'none';
